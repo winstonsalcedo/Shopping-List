@@ -10,37 +10,20 @@ import UIKit
 import CoreData
 
 class ShoppingListTableViewController: UITableViewController, UITextFieldDelegate {
-
-    
-    // Landing Pad will reload the view and refresh the cells for the user
-    var shoppingList: ShoppingList? {
-        didSet {
-            setNeedsFocusUpdate()
-            reloadInputViews()
-        
-        }
-    }
+ 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        do {
-          try  ShoppingListController.shared.fetchedResultsController.performFetch()
-        } catch {
-            print("error while fetching the data \(error.localizedDescription)")
-        }
-       
-           self.tableView.reloadData()
-            self.tableView.endUpdates()
-            
-        
-}
+        ShoppingListController.shared.fetchedResultsController.delegate = self
+
+    }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         return ShoppingListController.shared.fetchedResultsController.fetchedObjects?.count ?? 0
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-       let cell = tableView.dequeueReusableCell(withIdentifier: "listCell", for: indexPath) as! ShoppingListTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "listCell", for: indexPath) as! ShoppingListTableViewCell
         cell.delegate = self
         let shoppingList = ShoppingListController.shared.fetchedResultsController.fetchedObjects?[indexPath.row]
         cell.shoppingList = shoppingList
@@ -57,15 +40,7 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
         // I am trying to use the checkmark accessory type instead but cant figure it out yet.
         return cell
     }
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let cell = tableView.cellForRow(at: indexPath) {
-            if cell.isSelected {
-                cell.accessoryType = .checkmark
-            }else {
-                cell.accessoryType = .none
-            }
-        }
-    }
+
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
@@ -81,6 +56,7 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
 }
 //MARK: fetchController Delegate
 extension ShoppingListTableViewController: NSFetchedResultsControllerDelegate {
+    
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         
         switch type {

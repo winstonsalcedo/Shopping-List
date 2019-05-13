@@ -50,13 +50,6 @@ func updateViews() {
                 
             }
         }
-        //MARK: function to update the cells in the section.
-        private func reloadCellAtRow(row: Int) {
-            let indexPath = NSIndexPath(row: row, section: 0)
-            
-            tableView.beginUpdates()
-            tableView.reloadRows(at: [indexPath as IndexPath], with: .automatic)
-            tableView.endUpdates()
-        }
+
     }
 
